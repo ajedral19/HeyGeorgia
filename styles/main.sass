@@ -1,0 +1,982 @@
+*:root
+    --color-primary: #111866
+    --color-accent-a: #182296
+    --color-secondary: #f0b700
+    --color-accent-b: #ffcc25
+    --color-default: #1f1f1f
+    --color-mid: #808080
+    --color-low: #cec2c2
+    --color-light: #f7f7f7
+    --color-high: #ffffff
+    --color-error: #fa8e8e
+    --color-okay: #9ec4fd
+    
+// colors
+$clr-primary: var(--color-primary, #111866)
+$clr-accent-a: var(--color-accent, #2833aa)
+$clr-secondary: var(--color-secondary, #f0b700)
+$clr-accent-b: var(--color-accent, #ffcc25)
+$clr-default: var(--color-default, #1f1f1f)
+$clr-mid: var(--color-min, #808080)
+$clr-low: var(--color-low, #cec2c2)
+$clr-light: var(--color-light, #f7f7f7)
+$clr-high: var(--color-high, #ffffff)
+$clr-error: var(--color-error, #fa8e8e)
+$clr-okay: var(--color-okay, #9ec4fd)
+
+$navHeight: 70
+$navMinHeight: 640
+$navMaxHeight: 1024 - $navHeight
+
+
+$primary: var(--color-primary, #111866)
+$secondary: var(--color-secondary, #f0b700)
+$default: var(--color-default)
+$mid-grey: #808080
+$low-grey: #bfbfbf
+$light-grey: #f7f7f7
+$white: #ffffff
+
+@mixin screen($device)
+    $devices: ("phone": 150px, "tablet": 540px, "desktop": 1100px, "dektop-hd": 1900px)
+    $mw: map-get($devices, $device)
+    @media screen and (min-width: #{$mw})
+        @content
+
+@mixin headings()
+    $fsizes: ("sm": 4, "md": 5, "lg": 5.5)
+    $screenSize: ("sm": "phone", "md": "tablet", "lg": "desktop")
+    @each $sskey, $ssval in $screenSize
+        @include screen($ssval)
+        
+            @for $i from 1 through 6
+                $op: map-get($fsizes, $sskey)
+                // $fs: 5.5-$i
+                $fs: $op - $i
+                @if $fs < 1
+                    $fs: 1
+                .h#{$i}
+                    font-size: #{$fs}rem
+
+@mixin gaps()
+    $prefixes: ("m": "margin", "p": "padding")
+    $sides: ("b": "bottom", "t": "top", "l": "left", "r": "right" )
+    @each $pkey, $pval in $prefixes
+        @each $key, $val in $sides
+            @for $i from 0 through 12
+                .#{$pkey}#{$key}-#{$i}
+                    #{$pval}-#{$val}: #{$i}em
+
+@mixin weights()
+    $weights: ("light": 300, "regular": 400, "medium": 500, "bold": 600, "heavy": 800)
+    @each $key, $val in $weights
+        .#{$key}
+            font-weight: $val
+
+@mixin colors()
+    $prefixes: ("bg": "background-color", "clr": "color")
+    $colors: ("pr": $primary, "sc": $secondary, "df": $default, "mg": $mid-grey, "lg": $low-grey, "lig": $light-grey, "wt": $white)
+    @each $pkey, $pval in $prefixes
+        @each $key, $val in $colors
+            .#{$pkey}-#{$key}
+                #{$pval}: #{$val}
+
+@mixin flexbox()
+    $media: ("sm": 12, "md": 12, "lg": 12)
+    $screenSize: ("sm": "phone", "md": "tablet", "lg": "desktop")
+    .row
+        display: flex
+        flex-flow: row wrap
+        align-items: center
+        &.justify-between
+            justify-content: space-between
+        &.align-start
+            align-items: flex-start
+        .col
+            flex: 1
+        @each $mkey, $mval in $media
+            @include screen(map-get($screenSize, $mkey))
+                @for $i from 1 through $mval
+                    $basis: $i / $mval * 100%
+                    .col-#{$mkey}-#{$i}
+                        flex: 0 0 #{$basis}
+                        width: #{$basis}
+                        &.order-#{$mkey}-#{$i}
+                            order: $i
+        @for $i from 1 through 12
+            $basis: $i / 12 * 100%
+            .col-#{$i}
+                flex: 1 1 #{$basis}
+
+
+        @for $i from 1 through 3
+            $t: $i - .5
+            $gutter: $t / 2
+            &.gutter-s-#{$i}
+                margin: -#{$gutter}em
+            @each $key, $val in $media
+                &.gutter-s-#{$i}
+                    @for $c from 1 through $val
+                        .col
+                            padding: #{$gutter}em
+                        .col-#{$key}-#{$c}
+                            padding: #{$gutter}em
+
+    
+*, *::after, *::before
+    box-sizing: border-box
+    margin: 0
+    padding: 0
+    clear: both
+
+// html
+//     scroll-behavior: smooth
+
+body
+    background: $clr-high
+    color: $clr-default
+    font-family: 'Roboto'
+    font-size: 95%
+    position: relative
+    height: 100vh
+    width: 100%
+
+ul
+    list-style: none
+
+p, span, a, li, h1, h2, h3, h4, h5, h6
+    font-size: 1rem
+    font-weight: 400
+    text-decoration: none
+    color: inherit
+    line-height: 1.15
+
+p, a
+    line-height: 1.6rem
+
+span
+    font-size: inherit
+
+a
+    transition: color .3s ease
+    font-weight: inherit
+    &:hover
+        color: $clr-accent-a
+
+input, button
+    background: none
+    border: none
+    color: inherit
+    font-family: inherit
+    font-size: inherit
+    outline: none
+
+section
+    padding: 4em 0
+
+$icon-color: $clr-default
+$icon-bg: $clr-high
+svg
+    width: 100%
+    line-height: 0
+    margin: auto
+    display: block
+    .stroke
+        stroke: $icon-color
+    .stroke-only
+        stroke: $icon-color
+        fill: none
+    .stroke-light
+        stroke: $icon-bg
+        fill: none
+    .fill
+        fill: $icon-color
+    .fill-only
+        fill: $icon-color
+        stroke: none
+
+
+@include gaps()
+@include headings()
+@include weights()
+@include colors()
+@include flexbox()
+
+.container
+    max-width: 1170px
+    width: 100%
+    height: 100%
+    margin: auto
+    padding: 0 24px
+    &.nav-container
+        max-width: 1800px
+
+.field
+    position: relative
+    border: 1px solid $clr-low
+    height: 48px
+    cursor: text
+    &::after
+        content: ''
+        font-size: .8rem
+        position: absolute
+        text-align: center
+        width: 18px
+        height: 18px
+        border-radius: 50%
+        right: 1em
+        top: 50%
+        transform: translateY(-50%)
+        display: none
+        padding: .1em
+        vertical-align: middle
+        z-index: 2
+        cursor: default
+    .field-input, .field-label
+        position: absolute
+        width: calc( 100% - 2em)
+        height: auto
+        top: 50%
+        left: 50%
+        transform: translate(-50%, -50%)
+    .field-label
+        z-index: 0
+        text-transform: capitalize
+        color: $low-grey
+        font-weight: 500
+    &.focused
+        border: 1px solid $clr-okay
+        .field-label
+            width: fit-content
+            padding: .15em .3em
+            background: $clr-high
+            color: $clr-okay
+            transform: unset
+            top: -.7em
+            left: .85em
+            font-size: .8rem
+    &.error
+        border: 1px solid $clr-error
+        position: relative
+        .field-label
+            color: $clr-error
+        &::after
+            content: '!'
+            display: block
+            color: $clr-high
+            background: $clr-error
+
+// btn
+.btn
+    text-transform: capitalize
+    padding: 1.5em 1.75em
+    line-height: 0
+    display: inline-block
+    position: relative
+    cursor: pointer
+    text-align: center
+    font-weight: 500
+    &.icon-only
+        width: 2.5em
+        height: 2.5em
+        padding: .55em
+        vertical-align: middle
+        border-radius: .25rem
+        transition: background .3s ease
+        &.footer-icon
+            width: 2.5em
+            height: 2.5em
+            svg
+                // width: 18px
+                height: 18px
+        &.round
+            background: $clr-light
+            opacity: .9
+            width: 34px
+            height: 34px
+            max-width: 34px
+            max-height: 34px
+            border-radius: 50%
+            transition: background .2s ease, border .2s ease
+            svg
+                max-height: 12px
+                transition: stroke .2s ease
+                // max-width: 12px
+        &.transparent
+            background: none
+            border: 1px solid $clr-low
+        &:hover
+            background: $clr-light
+            transition: unset
+            &.round
+                background: $clr-primary
+                transition: unset
+                svg
+                    .stroke-only
+                        stroke: $clr-high
+                        transition: unset
+            &.transparent
+                background: $clr-primary
+                border: none
+            &.footer-icon
+                background: unset
+    @include screen(desktop)
+        &.icon-only
+            width: 3em
+            height: 3em
+            padding: .5em
+            border-radius: .35em
+            &.round
+                width: 48px
+                height: 48px
+                max-width: 48px
+                max-height: 48px
+            svg
+                max-height: 24px
+    &.icon-inline
+        display: inline-block
+        &.block
+            display: block
+        &.transparent
+            padding: 0
+            svg .stroke-only
+                transition: stroke .3s ease
+        &.primary, &.secondary
+            $icon-color: $clr-high
+            color: $clr-high
+            position: relative
+            z-index: 1
+            transition: background .3s ease
+            svg
+                .stroke
+                    stroke: $icon-color
+                .stroke-only
+                    stroke: $icon-color
+                    fill: none
+                .stroke-light
+                    stroke: $icon-bg
+                    fill: none
+                .fill
+                    fill: $icon-color
+                .fill-only
+                    fill: $icon-color
+                    stroke: none
+        &.primary
+            background: $clr-primary
+        &.secondary
+            background: $clr-secondary
+            &::before
+                background: $clr-primary
+        .icon
+            display: inline-block
+            max-width: 12px
+            &.right
+                margin-left: 1.5em
+            &.left
+                margin-right: 1.5em
+
+    &:hover
+        &.icon-inline
+            &.primary, &.secondary
+                background: $clr-accent-a
+                transition: unset
+            &.secondary
+                background: $clr-accent-b        
+            &.transparent
+                svg .stroke-only
+                    stroke: $clr-accent-a
+                    transition: unset
+            
+// end btn
+    // --------
+
+
+.block
+    display: block
+
+.align-left
+    text-align: left
+
+.sub-label
+    font-size: .9rem
+
+.header
+    height: 100%
+
+.heading
+    color: $primary
+
+.uppercase
+    text-transform: uppercase
+
+.capitalize
+    text-transform: capitalize
+
+@include screen(tablet)
+    .container
+        padding: 0 32px
+
+
+// carousel
+.carousel
+    width: 100%
+    height: 100%
+    display:  block
+    position: relative
+    .item
+        position: absolute
+        left: 0
+        height: auto
+        display: block
+        transition: transform .3s ease
+    &.gap-1
+        .item
+            padding: 1em 7.5px
+    &.gap-2
+        .item
+            padding: 1em 12px
+        &.inner
+            margin-left: -12px
+            margin-right: -12px
+    &.infinite
+        .item
+            transition: opacity .6s ease, transform .3s ease, left .3s ease
+            top: 50%
+            transform: translateY(-50%)
+    &.single
+        .item
+            left: 0
+            top: 0
+            width: 100%
+            height: 100%
+            opacity: 1
+            transition: opacity 1s linear
+// end carousel
+
+.car-card
+    padding: 1em
+    background: $white
+    border-radius: .5em
+    display: flex
+    flex-flow: row nowrap
+    gap: 1em
+    align-items: center
+    min-width: 280px
+    max-width: 350px
+    width: 100vw
+    box-shadow: 0px 3px 3px -3px #16161634
+    .details
+        flex: 1 0 60%
+
+    .car-pic-wrap
+        flex: 1 0 45%
+        position: relative
+        height: 80px
+        img
+            position: absolute
+            height: 100%
+            width: auto
+            top: 50%
+            left: 50%
+            transform: translate(-50%, -50%)
+
+   
+.p-card
+    max-width: 170px
+    min-width: 140px
+    position: relative
+    height: auto
+    padding-top: 150%
+    transform-origin: bottom
+    transition: padding-top .3s ease
+
+    &.active
+        padding-top: 180%
+
+    .background
+        position: absolute
+        width: 100%
+        height: 100%
+        top: 0
+        left: 0
+        z-index: 1
+        overflow: hidden
+        img
+            height: 100%
+            position: absolute
+            // top: 50%
+            // transform: translateY(-50%)    
+
+.room-card
+    position: relative
+    // min-width: 220px
+    // max-width: 350px
+    width: 100%
+    height: 600
+    .background
+        position: relative
+        overflow: hidden
+        width: 100%
+        height: auto
+        padding-top: 95%
+
+        img
+            position: absolute
+            height: 100%
+            top: 0
+            left: 50%
+            transform: translateX(-50%)
+
+    .body
+        padding: 1em 0
+        .name
+            margin-bottom: 8px
+        .category
+            margin-bottom: 16px
+
+    &.active
+        // max-width: unset
+        height: 100%
+        .background
+            width: 100%
+            height: 100%
+            padding-top: 60%
+            z-index: 0
+            &::before
+                content: ''
+                position: absolute
+                height: inherit
+                width: inherit
+                top: 0
+                left: 0
+                // background: rgba($color: $default, $alpha: .4)
+                background: linear-gradient(0deg, $default -20%, transparent 80%)
+                mix-blend-mode: multiply
+                display: block
+                z-index: 1
+            img
+                height: auto
+                width: 100%
+                top: 50%
+                left: 50%
+                transform: translate(-50%, -50%)
+        .body
+            position: absolute
+            bottom: 0
+            left: 0
+            padding: 1em
+            
+            .name, .category, .price-range
+                color: $white
+            
+            .name
+                font-size: 1.25rem
+            .category
+                opacity: .75
+
+// header
+header
+    padding: 1.5em 0
+    min-height: #{$navHeight}px
+    nav
+        .nav-container
+            background: #fff
+            display: flex
+            align-items: center
+            .nav-content
+                height: auto
+                width: 100%
+                display: flex
+                flex-flow: row wrap
+                align-items: center
+                justify-content: space-between
+                transition: height .3s ease
+                .nav-logo
+                    flex: 1
+                    .logo-wrap
+                        min-width: 80px
+                        max-width: 116px
+                        display: block
+                        line-height: 0
+                        #logo
+                            .letter
+                                fill: $clr-primary
+
+                .nav-buttons
+                    flex: 1
+                    text-align: right
+                    // .btn:not(:first-child)
+                    //     margin-left: 0
+
+                .nav-menu
+                    position: relative
+                    overflow: hidden
+                    flex: 1 0 100%
+                    order: 3
+                    height: 0px
+                    transition: height .3s ease
+                    .nav-menu-items
+                        padding-top: 2em
+                        .item
+                            font-weight: 500
+                            color: $clr-default
+                            a
+                                padding: .75em 0
+                                display: block
+                    &.toggled
+                        height: 100%
+// end header
+
+// sections
+section
+    position: relative
+    overflow: hidden
+
+    &.destinations
+        position: relative
+        overflow: hidden
+        min-height: 300px
+        padding-top: 4em    
+        .featured-destinations
+            position: relative
+            .carousel-wrap
+                overflow-x: clip
+                width: 110%
+
+            .carousel
+                margin-top: 2em
+
+            .controls
+                position: absolute
+                width: 100%
+                top: 50%
+                transform: translateY(-50%)
+                z-index: 2
+                .btn
+                    top: 50%
+                    transform: translateY(-50%)
+                    position: absolute
+                    &.prev
+                        left: -8px
+                    &.next
+                        right: -8px
+                        
+    &.car-rent
+        .explore-btn
+            order: 4
+
+        .car-buttons
+            text-align: right
+            .next
+                margin-left: 1em
+
+        .featured-cars
+            overflow-x: clip
+            width: 150%
+
+    &.landmarks
+        .lm .background
+            width: 100%
+            height: 80px
+            position: relative
+            overflow: hidden
+
+            img
+                position: absolute
+                width: 100%
+                top: 50%
+                transform: translateY(-50%)
+// end sections 
+// footer
+footer
+    .footer
+        .subscribe-head
+            font-size: 2rem
+            margin-bottom: 16px
+        .footer-nav
+            margin-bottom: 2em
+            .nav-links-head
+                position: relative
+                display: block
+                cursor: pointer
+                padding: .5em 0
+                &::after
+                    content: url(../assets/svg/icon-drop.svg)
+                    width: .5em
+                    display: block
+                    position: absolute
+                    line-height: 0
+                    right: 0
+                    top: 50%
+                    transform: translateY(-50%)
+                &.toggled
+                    &::after
+                        transform: translateY(-50%) rotateZ(180deg)
+            .nav-links
+                li
+                    line-height: 36pt
+                    padding-left: .5em
+                    &:first-child
+                        margin-top: 1em
+                &.collapsible
+                    height: 0px
+                    overflow: hidden
+                    transition: height .3s ease
+                    &.toggled
+                        height: 100%
+    .attributions
+        padding: 2em 0
+        border-top: 1px solid $clr-low
+        display: flex
+        flex-flow: row nowrap
+        align-items: center
+        justify-content: space-between
+        .footer-logo
+            min-width: 80px
+            max-width: 100px
+            #logo .letter
+                fill: $clr-default
+        .social-media-links
+            .link
+                display: inline
+                .icon-only
+                    height: unset
+                a svg .fill-only
+                    fill: $clr-mid
+                    transition: fill .3s ease
+                &:not(:last-child)
+                    margin-right: .75em
+                &:hover
+                    a svg .fill-only
+                        fill: $clr-accent-a
+                        transition: unset
+                    
+// end footer
+
+// main banner
+.main-banner
+    position: relative
+    overflow: hidden
+    padding: 0
+    min-height: #{$navMinHeight}px
+    max-height: #{$navMaxHeight}px
+    height: calc(100vh - #{$navHeight}px)
+    z-index: 0
+
+    .banner-content
+        height: 85%
+        background: $light-grey
+        background-image: url(../assets/bg.png)
+        background-position: center center
+        background-size: auto
+        background-repeat: no-repeat
+        position: relative
+        .container
+            position: absolute
+            z-index: 2
+            left: 50%
+            transform: translateX(-50%)  
+
+    .h-end
+        width: 100%
+        height: 15%
+        bottom: 0
+        position: relative
+        z-index: 0
+        .scroll-down-btn
+            position: absolute
+            padding: 0
+            top: 50%
+            transform: translateY(-50%)
+            text-align: left
+            display: flex
+            align-items: center
+            gap: 1em
+            cursor: pointer
+            .icon
+                display: block
+                max-width: 12px
+                svg
+                    .stroke-only
+                        stroke: $clr-primary
+                        stroke-width: .5px
+
+    .background
+        position: absolute
+        width: 46%
+        height: 100% 
+        right: 0
+        top: 0
+        z-index: 1
+
+        .fw-img
+            overflow: hidden
+            width: 100%
+            height: 100%
+            position: relative
+
+            img
+                position: absolute
+                width: auto
+                height: 100%
+                left: 50%
+                top: 50%
+                transform: translate(-50%, -50%)
+// end main banner
+
+
+@include screen(tablet)
+    $navMaxHeight: 1024 - $navHeight
+
+    .room-card
+        .background
+        .body
+            .name, .category, .price-range
+                font-size: .8rem
+        &.active
+            .background
+                img
+                    width: auto
+                    height: 100%
+            .body
+                padding: 2em
+                .name
+                    font-size: 1rem
+    .p-card
+        min-width: 270px
+
+    .main-banner
+        max-height: #{$navMaxHeight}px
+        .background
+            width: 66%
+            left: 37%
+
+    section
+        &.destinations
+            padding: 7em 0 10em
+            .carousel-container
+                width: 115%
+                overflow-x: clip
+                .carousel
+                    margin-top: 0
+                    margin-left: -.5em
+
+        &.hotels-and-apartments
+            padding: 1.5em 0
+            .col.active
+                position: absolute
+                padding-top: 0
+                padding-bottom: 0
+                right: -1.5em
+                width: calc( (7 / 12 * 100%) + 1em )
+                height: 100%
+                top: 50%
+                transform: translateY(-50%)
+
+        &.car-rent .explore-btn
+            order: unset
+    footer
+        .footer
+            .subscribe-head
+                font-size: 1rem
+            .footer-nav
+                margin-bottom: unset
+                .nav-links-head
+                    padding: 0
+                    &::after
+                        content: unset
+                .nav-links
+                    margin-top: 2em
+                    padding: 0
+                    &.collapsible
+                        height: unset
+                
+@include screen(desktop)
+    $navHeight: 120
+    $navMaxHeight: 1080 - $navHeight
+
+    header
+        min-height: #{$navHeight}px
+        padding: 2.25em 0
+        nav
+            .nav-container .nav-content
+                .nav-logo
+                    flex: 1 0 5%
+                    .logo-wrap
+                        max-width: 132px
+                .nav-buttons
+                    .btn:not(:first-child)
+                        margin-left: 1em
+                    .menu-toggler
+                        display: none
+                .nav-menu
+                    flex: 1 0 60%
+                    order: unset
+                    height: auto
+                    .nav-menu-items
+                        padding-top: unset
+                        display: flex
+                        flex-flow: row nowrap
+                        gap: 2.5em
+                    &.toggle
+                        &.show
+                            height: unset
+    // end header
+    .p-card
+        min-width: 270px
+
+    .room-card
+        .body
+            .name, .category, .price-range
+                font-size: 1rem
+        &.active
+            .background
+                img
+                    width: 100%
+                    height: auto
+            .body
+                padding: 3em
+                .name
+                    font-size: 1.25rem
+
+    .main-banner
+        max-height: #{$navMaxHeight}px
+        height: calc(100vh - #{$navHeight}px)
+        .background
+            width: 66.40%
+            right: unset
+            left: 33.6
+            .fw-img
+                img
+                    width: 100%
+                    height: auto
+
+    section
+        &.destinations
+            padding: 12em 0
+            .featured-destinations
+                position: unset
+                .carousel-wrap
+                    width: 200%
+                .controls
+                    width: 46.5%
+                    top: 51%
+                    max-width: 900px
+                    .btn
+                        &.prev
+                            left: -8px
+                        &.next
+                            right: -8px
+
+        &.hotels-and-apartments
+            .col.active
+                width: calc( (6 / 12 * 100%) + 1em )
+
+    
+                
+
+
+                
+
+
+            
